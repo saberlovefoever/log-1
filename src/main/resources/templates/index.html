@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh" class="no-js" xmlns:th=xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>导航页</title>
+	<style>
+		body {
+
+			background: url("/img/bg_01.jpg")  no-repeat;
+			background-size: 100% 420%;
+		}
+		h1{
+			text-align: center;
+			color: white;
+		}
+		.nav{
+			margin: 0 0 0 0;
+			text-align: center;
+		}
+		.bt{
+				/*text-align: center;*/
+				/*display: block;*/
+				border-color: #7B4611;
+				height: 50px;
+				width: 100px;
+				border-radius: 20px;
+				margin: 20px 10px;
+		}
+		.bt:hover{
+			background-color: #B1B1B1;
+		}
+	</style>
+</head>
+<body>
+	<div class="nav" >
+		<h1>导航页欢迎语</h1>
+		<button class = "bt" th:each = "s:${demo}" th:text="${s.name}" th:onclick=window.location.href=[[${s.address}]]>
+		</button>
+
+
+	</div>
+
+</body>
+</html>

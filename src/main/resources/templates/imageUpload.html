@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	ul  ::marker{
+		content:counter(list-item) "› ";
+		color: #00b7a8; 
+		font-family: "Comic Sans MS", cursive, sans-serif;
+		}
+	.upload-button { /* 按钮美化 */
+		width: 270px; /* 宽度 */
+		height: 40px; /* 高度 */
+		border-width: 0px; /* 边框宽度 */
+		border-radius: 3px; /* 边框半径 */
+		background: #1E90FF; /* 背景颜色 */
+		cursor: pointer; /* 鼠标移入按钮范围时出现手势 */
+		outline: none; /* 不显示轮廓线 */
+		font-family: Microsoft YaHei; /* 设置字体 */
+		color: white; /* 字体颜色 */
+		font-size: 17px; /* 字体大小 */
+		position: relative;
+		left: 50px;
+	}
+	.upload-button:hover { /* 鼠标移入按钮范围时改变颜色 */
+		background: #5599FF;
+	}
+	.fileSelect{
+
+	}
+	
+</style>
+</head>
+<body>
+[[${msg}]]
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=500 height=86 src="//music.163.com/outchain/player?type=2&id=28200261&auto=1&height=66"></iframe>
+	<form action="/imageUp" accept="image/*"  enctype="multipart/form-data" method="post">
+		<input type="file" id="fileElem" name="imageFile" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+		<a href="#" id="fileSelect" class="fileSelect">Select some files</a><button type="submit" class="upload-button">上传！</button>
+		<div id="fileList">
+		<p class="notice">No files selected!</p>
+		</div>
+	</form>
+
+<script type="text/javascript">
+	window.URL = window.URL || window.webkitURL;
+	
+	var fileSelect = document.getElementById("fileSelect"),
+	    fileElem = document.getElementById("fileElem"),
+	    fileList = document.getElementById("fileList");
+	
+	fileSelect.addEventListener("click", function (e) {
+	    if (fileElem) {
+	        fileElem.click();
+	    }
+	    e.preventDefault(); // prevent navigation to "#"
+	}, false);
+	
+	function handleFiles(files) {
+	    if (!files.length) {
+	        fileList.innerHTML = "<p>No files selected!</p>";
+	    } else {
+	        fileList.innerHTML = "";
+	        var list = document.createElement("ul");
+	        fileList.appendChild(list);
+	        for (var i = 0; i < files.length; i++) {
+	            var li = document.createElement("li");
+	            list.appendChild(li);
+	            var img = document.createElement("img");	           
+	            img.src = window.URL.createObjectURL(files[i]);
+	            img.height = 200;
+	            img.onload = function () {
+	                window.URL.revokeObjectURL(this.src);
+	            }
+	            li.appendChild(img);
+				var select = document.createElement("select");
+				select.name = "imgStyle";
+				select.innerHTML = "<option>动漫</option><option>风景</option>";
+				li.appendChild(select);
+// 				var describe = document.createElement("input");
+// 				describe.value  =  select.value;
+// 				li.appendChild(describe);
+				
+	            var info = document.createElement("span");
+				var	nWidth = img.naturalWidth;
+				var	nHeight = img.naturalHeight;
+				var fsize = (files[i].size/(1024*1024)).toFixed(1);
+				console.log(fsize)
+	            info.innerHTML = files[i].name + ": " + fsize+ " MB  ";
+	            li.appendChild(info);
+	        }
+	    }
+	}
+</script>
+</body>
+</html>

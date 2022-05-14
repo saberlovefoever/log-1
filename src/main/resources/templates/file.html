@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>上传文件并预览</title>
+	<script src="G:js/jquery.min.js"></script>
+	<style>
+		#dropbox {
+			width: 600px;
+			height: 150px;
+			line-height: 125px;
+			text-align: center;
+			border: 2px dashed #999;
+			border-radius: 5px;
+			background: #fbfbfb;
+			color: #666;
+		}
+		#preview img{
+			height: 80px;
+			margin: 7px;
+			border: 1px solid #666;
+			border-radius: 4px;
+			box-shadow: 3px 3px 3px #bbb;
+		}
+		#outbox{
+			display: inline-block;
+			position: relative;
+			overflow: hidden;
+		}
+		#fileUpload{
+			position: absolute;
+			left: 0px;
+			font-size: 60px;
+			opacity: 0;
+			height:100%;
+		}
+		#showFile{
+			width:100%;
+			height:100%;
+			display:none;
+			position:fixed;
+			top:0;
+			left:0;
+			background:rgba(0,0,0,0.7);
+			z-index:2;
+		}
+		.strDiv{
+			display:inline-block;
+			margin-right:30px;
+		}
+		.strSpan{
+			margin-left:10px;
+			overflow:hidden;
+			margin-top:-8px;
+			cursor:pointer;
+			height:50px;
+			font-size: 12px;
+		}
+	</style>
+</head>
+<body>
+	<div id="bts">
+		<button type="button"id="btn">全部上传</button>	
+	</div>
+	<div id="outbox">
+		<div id="dropbox">
+			<input id="fileUpload" type="file" multiple="multiple">
+			<span style="background-color: aqua;">点击或将单个/多个文件拖放到此处</span>
+		</div>
+	</div>
+	<div id="preview"></div>
+	<div id="showFile">
+		<div id="innerdiv" style="position:absolute;"></div>
+	</div>
+	<script>
+		var dropbox, fileUpload,add;
+				
+		dropbox = document.getElementById("dropbox");
+		
+		btn = document.getElementById("btn");
+				
+		dropbox.addEventListener("dragenter", dragenter, false);
+		dropbox.addEventListener("dragover", dragover, false);
+		dropbox.addEventListener("dragleave", dragleave, false);
+		dropbox.addEventListener("drop", drop, false);
+
+		fileUpload = document.getElementById("fileUpload");
+		fileUpload.addEventListener("change", readFile, false);
+		
+		btn.addEventListener('click',add,false);
+		
+		// 上传server
+		function add(){
+			$.ajax({ 
+				url:"/imageLogin", 
+				type:"POST", 
+				data:fileUpload.value ,
+				contentType: false, 
+				processData: false, 
+				success:function(rst){ 
+					// if(rst.state){ 
+						// var url="/"+rst.data; 
+						// $('<img class="show-img" src="'+url+'">').appendTo("#imgs"); 
+						// } 
+						alert("1234");
+						// } 
+						});
+
+		}
+
+		// 目标进入drop区域
+		function dragenter(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			dropbox.style.background = '#666'
+		}
+		// 目标位于drop区域上方
+		function dragover(e) {
+			e.stopPropagation();
+			e.preventDefault();
+		}
+		// 目标离开drop区域
+		function dragleave(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			dropbox.style.background = '#fbfbfb';
+		}
+		// 目标在drop区域被释放/放置（松开鼠标）
+		function drop(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			dropbox.style.background = '#fbfbfb';
+
+			var dt = e.dataTransfer;
+			var files = dt.files;
+
+			handleFiles(files);
+		}
+		// 点击上传文件后的方法
+		function readFile() {
+			handleFiles(this.files);
+		}
+		// 显示缩略图的方法
+		function handleFiles(files) {
+			for (var i = 0; i < files.length; i++) {
+				var file = files[i];
+				var imageType = /^image\//;
+				// 如果文件是图片的话
+				if (imageType.test(file.type)) {
+					//创建div对象和img对象并加入到页面中
+					var strDiv = document.createElement("div");
+					var img = document.createElement("img");
+					var span = document.createElement("div");
+					//为创建的div对象添加样式
+					strDiv.className='strDiv';
+					span.className='strSpan';
+					span.innerHTML=file.name;	//显示图片名称
+					strDiv.appendChild(img);
+					strDiv.appendChild(span);
+					preview.appendChild(strDiv);
+					
+					img.onload=function(){
+						span.style.width=$(img).width()+"px";
+					}
+					
+					//创建预览的大图的img元素
+					var bigimg = document.createElement("img");
+					document.getElementById("innerdiv").appendChild(bigimg);
+					//为缩略图添加点击事件
+					img.onclick = function(){
+						showImg("#showFile", "#innerdiv", $(this),bigimg);
+					}
+					var reader = new FileReader();
+					reader.readAsDataURL(file);
+					reader.onload = (function (aImg) {
+						return function (e) {
+							aImg.src = e.target.result;
+						};
+					})(img);
+				}else{
+					//如果是其他类型的文件的话
+				}
+			}
+		}
+		
+		//点击缩略图查看大图
+		function showImg(showFile, innerdiv, _this,bigimg){
+			var src = _this.attr("src");	//获取当前点击的img元素中的src属性
+			$(bigimg).attr("src", src);		//设置bigimg元素的src属性
+
+			//获取当前点击图片的真实大小，并显示弹出层及大图
+			$("<img/>").attr("src", src).load(function(){
+				var windowW = $(window).width();	//获取当前窗口宽度
+				var windowH = $(window).height();	//获取当前窗口高度
+				var realWidth = this.width;			//获取图片真实宽度
+				var realHeight = this.height;		//获取图片真实高度
+				var imgWidth, imgHeight;
+				var scale = 1;						//缩放尺寸，当图片真实宽度和高度大于窗口宽度和高度时进行缩放
+
+				if(realHeight>windowH*scale) {		//判断图片高度
+					imgHeight = windowH*scale;		//如大于窗口高度，图片高度进行缩放
+					imgWidth = imgHeight/realHeight*realWidth;	//等比例缩放宽度
+					if(imgWidth>windowW*scale) {	//如宽度扔大于窗口宽度
+						imgWidth = windowW*scale;	//再对宽度进行缩放
+					}
+				} else if(realWidth>windowW*scale) {//如图片高度合适，判断图片宽度
+					imgWidth = windowW*scale;		//如大于窗口宽度，图片宽度进行缩放
+					imgHeight = imgWidth/realWidth*realHeight;	//等比例缩放高度
+				} else {							//如果图片真实高度和宽度都符合要求，高宽不变
+					imgWidth = realWidth;
+					imgHeight = realHeight;
+				}
+				$(bigimg).css("width",imgWidth);	//以最终的宽度对图片缩放
+
+				var w = (windowW-imgWidth)/2;		//计算图片与窗口左边距
+				var h = (windowH-imgHeight)/2;		//计算图片与窗口上边距
+				$(innerdiv).css({"top":h, "left":w});//设置innerdiv的top和left属性
+				$(showFile).fadeIn("fast");			//淡入显示outerdiv及img
+			});
+
+			$(showFile).click(function(){			//再次点击淡出消失弹出层
+				$(this).fadeOut("fast");
+			});
+		}
+	</script>
+</body>
+</html>

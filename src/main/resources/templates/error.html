@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ERROR PAGE</title>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+    <link rel="icon" th:href="@{/img/pineapple.png}" type="image/x-icon" />
+    <style>
+        .check_1{
+            text-decoration: #3cd12c;
+        }
+    </style>
+</head>
+<body>
+<h1>ERROR PAGE</h1>
+<a class="check_1" onclick="check()" href="">九阴真经</a>
+<p></p>
+<script>
+    $(".check_1").addEventListener("click",function (e) {
+        e.preventDefault()
+        check();
+    })
+    function check() {
+    $.ajax({
+        type: "get",
+        async: true,
+        url: "/checkLogin",
+        dataType: "json",
+        success:function (data) {
+            if (data.status==1) {
+                alert("登陆成功"+data.user);
+                // clearInterval(count);
+            }else if (data.status==2){
+                alert("验证失败，请重试")
+                location.reload();
+            }
+        },error:function (data) {
+            console.log(data.status);
+        }
+
+    })
+    }
+</script>
+</body>
+</html>

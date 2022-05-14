@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="org.whh.bz.dao.ImgDao">
+    <resultMap type="img" id="getAllResult" autoMapping="true">
+    		<id property="imgId" column="img_id"></id>
+			<result property="imgUpdate" column="img_update"></result>
+    		<result property="imgKeywords" column="img_keywords"></result>
+    		<result property="imgType" column="img_type"></result>
+    		<result property="imgSize" column="img_size"></result>
+    </resultMap>
+    <select id="getAll" resultMap="getAllResult">
+    	SELECT * FROM img LIMIT #{page},21;
+    </select>
+    <select id="findByID" resultMap="getAllResult">
+    	SELECT	* FROM	img  WHERE img_id =#{id};
+    </select>
+	<insert id="add"  useGeneratedKeys="false"  >
+		INSERT  INTO
+						img (
+							img_id ,
+		    				img_update ,
+		    				img_keywords ,
+		    				img_type ,
+		    				img_size 
+						)
+		VALUES
+			<foreach collection="list"  item="a"   separator=","   index="0">				
+						(
+						#{a.imgId},
+						now(),
+						#{a.imgKeywords},
+						#{a.imgType},
+						#{a.imgSize}
+						)			
+			</foreach>		
+			;
+</insert>
+    <select id="getLatestId" resultType="int">
+    
+    SELECT ifnull (
+    
+	   	(	SELECT 
+	   	 				max(img_id) as id
+		   	FROM
+	   					img 
+   		) ,0
+	 
+	)
+   	;
+    </select>
+	<resultMap id="getIDAndKeywords" type="img">
+		<id property="imgId"  column="img_id"></id>
+		<result property="imgKeywords" column="img_keywords"></result>
+	</resultMap>
+    <select id="findByKeyword"  resultMap="getIDAndKeywords" resultType="img">
+		    select
+		           img_id,
+				   img_keywords
+		    from img
+		    where img_keywords
+		    like  concat('%',#{keyword},'%')
+			limit #{page},21
+		   ;
+    </select>
+
+    </mapper>
