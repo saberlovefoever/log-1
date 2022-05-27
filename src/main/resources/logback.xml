@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<configuration scan="true" scanPeriod="3 seconds">
+<configuration  debug="true">
     <!-- 控制台输出 ConsoleAppender-->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
        <!--  过滤掉非info的日志 -->
@@ -10,7 +10,7 @@
     </appender>
     <!-- 日志级别排序为： TRACE < DEBUG < INFO < WARN < ERROR -->
     <!-- 日志输出级别 -->
-    <root level="info">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
 <!--        <appender-ref ref="FILE" />-->
     </root>
@@ -59,7 +59,7 @@
         <appender-ref ref="STDOUT" />
     </logger>
     <!-- 打印事务轨迹 -->
-<!--    <logger name="druid.sql.Connection" level="DEBUG" />
+<!--<logger name="druid.sql.Connection" level="DEBUG" />
     <logger name="org.springframework.jdbc.datasource.CoreDataSourceUtils" level="DEBUG" />
     <logger name="org.springframework.jdbc.datasource.DataSourceUtils" level="DEBUG" />
     <logger name="org.apache.zookeeper.ClientCnxn" level="info" />

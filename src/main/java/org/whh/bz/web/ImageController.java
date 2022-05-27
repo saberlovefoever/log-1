@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -44,11 +45,15 @@ public class ImageController {
 	private RedisUserService redisUserService;
 	//	图片搜索
 	@RequestMapping(value={"/search"},method = RequestMethod.POST)
-	private String search(HttpServletRequest req,@RequestParam("keyboard") String keyboard) {
-		List<Img>  list = imgService.findByKeyword( keyboard,1);
+	private ModelAndView search(ModelAndView mov,HttpServletRequest req,@RequestParam("keyboard") String keyboard) {
+//		keyboard要进行数据校验
+		StringBuffer sb =new StringBuffer(keyboard.trim());
+
+		List<Img>  list = imgService.findByKeyword( sb.toString(),1);
 		req.setAttribute("list", list);
 		req.setAttribute("keyboard", keyboard);
-		return "bian";
+		mov.setViewName("bian");
+		return mov;
 	}
 
 	//=================	IMAGEDetailes===================
@@ -70,10 +75,19 @@ public class ImageController {
 		request.setAttribute("pic", pic);
 		return "details";
 	}
-	//===================IMAGE下载================
+
+	/**
+	 * 下载验证
+	 * @param sessionID
+	 * @param req
+	 * @param resp
+	 * @param id
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/getUserState/{id}")
 	@ResponseBody
-	private String imgDownload(@CookieValue(name = "sessionID",defaultValue = "0",required = false)String sessionID,
+	private String downloadCheck(@CookieValue(name = "sessionID",defaultValue = "0",required = false)String sessionID,
 							   HttpServletRequest req, HttpServletResponse resp,
 							   @PathVariable("id")String id) throws IOException {
 			Map map =new HashMap();
@@ -96,6 +110,10 @@ public class ImageController {
 
 		return JSON.toJSONString(map);
 	}
+
+	/**
+	 * 图片下载
+	 */
 	@RequestMapping(value = "/download/{id}")
 	private void imgDownload(HttpServletResponse resp,
 							 @PathVariable(value = "id")String id) throws IOException {
@@ -141,23 +159,26 @@ public class ImageController {
 			ioe.printStackTrace();
 		}
 	}
-	//===================IMAGE上传界面导航================	
-	@RequestMapping(value = "/imgadd",method = RequestMethod.GET)
-	private String imageLogin() {
-		return "imageUpload";
+	@RequestMapping(value = "/upPage" , method = RequestMethod.GET)
+	private String uploads1(){
+		return "upload";
 	}
-	//===================IMAGE上传==================	
-	@RequestMapping(value = "/imageUp" , method = RequestMethod.POST)
-	private String imageUpload(
+
+	@RequestMapping(value = "/up" , method = RequestMethod.POST)
+	private ModelAndView uploads1(
 			@RequestParam(value = "imageFile")MultipartFile[] multipartFile,
-			HttpServletRequest req,
+			HttpServletRequest req,HttpServletResponse resp,
 			@RequestParam(value = "imgStyle") String[] selectStyle
 			) throws IllegalStateException, IOException {
-		if (multipartFile==null) {
-			req.setAttribute("msg", "没有选择文件！");
-			return "forward:/imgadd";
+		ModelAndView  mav=null;
+		mav.setViewName("upload");
+		if (multipartFile.length==0) {
+			return mav;
 		}
-		imgService.add(multipartFile,selectStyle);
-		return "redirect:/imgadd";		//重定向到首页
+		List<String> list = imgService.add(multipartFile,selectStyle);
+		if (list.size()!=0){
+				mav.addObject("msg","部分成功上传！");
+		}
+		return mav;
 	}
 }

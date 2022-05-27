@@ -15,16 +15,16 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
       /* 从cookie获取用户记录*/
-        Cookie[] cookies = request.getCookies();
-        String s = cookies[0].getValue();
+//        Cookie[] cookies = request.getCookies();
+//        String s = cookies[0].getValue();
         /*去redis中查找 token redis业务要做空指针处理*/
-        Object si = defaultRedisTemplate.opsForHash().get(s,s);
+//        Object si = defaultRedisTemplate.opsForHash().get(s,s);
        /* 写法要写的讲究些，null不可能有equals方法*/
         /*自定义处理器  ==>   Object handler */
-        if(!s.equals(si)){
-            response.sendRedirect("WEB-INF/jsp/error.jsp");
-            return false;
-        }
+//        if(s==null&&!s.equals(si)){
+//            response.sendRedirect("error.html");
+//            return false;
+//        }
         return  true;
     }
 }

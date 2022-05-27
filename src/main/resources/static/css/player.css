@@ -94,7 +94,7 @@
 	opacity:0.3
 }
 .liebiao {
-	background-image:url(/song/liebiao.png);
+	/*background-image: -moz-element();*/
 	background-position:-58px -14px !important;
 	width:13px;
 	height:10px;
@@ -179,7 +179,7 @@
 }
 #pContent {
 	width:270px;
-	box-shadow:blockbox-shadow:1px 0px 5px 2px rgb(36,95,88);
+	box-shadow:blockbox-shadow: 1px 0px 5px 2px rgb(36,95,88);
 }
 #pContent .ssBtn {
 	width:20px;

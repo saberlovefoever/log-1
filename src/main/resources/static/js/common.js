@@ -4,16 +4,7 @@ $(function () {
         $(".list img").lazyload({effect: "fadeIn", threshold: 350});
     } catch (err) {
     }
-    $(".loginbar .in").click(function () {
-        weixinlogin();
-        return;
-        var bodyheight = jQuery(document).height();
-        $("#login_opacity_bg,.tbox").fadeIn(300);
-        $("#login_opacity_bg").css("height", bodyheight);
-        $(".tiptext").text("欢迎您登陆彼岸图网");
-        $("#qq_register").text("QQ一键登录");
-        $("#weixin_register").text("微信扫一扫登录");
-    });
+
     $(".loginbar .register").click(function () {
         weixinlogin();
         return;
@@ -25,7 +16,7 @@ $(function () {
         $("#weixin_register").text("微信一键注册");
     });
     $(".tbox .close ").click(function () {
-        $(".tbox,#login_opacity_bg").fadeOut(300)
+        $(".tbox,#login_opacity_bg").fadeOut(300);
     });
     $(".downpic a").click(function () {
        var id = $(this).attr("data-id");
@@ -103,7 +94,8 @@ function checkLogin(){
             /*已登录 隐藏登录条 并显示 用户名字 */
             $(".register").hide();
             $(".in").hide();
-            $(".loginbar").append('<p class=\"loginuser\">'+data.user.wxName+'</p>');
+            $(".loginbar").text(data.userName);
+            $(".loginbar").css("color","green");
         }else if (data.status==2){
 
         }
@@ -113,30 +105,39 @@ function checkLogin(){
 $(function(){
     checkLogin();
 })
+
 function weixinlogin() {
+
+    // 获取登录二维码
     var a = $(".hiddenssid").val();
     console.log(a);
     var s ="/getQRcode/"+a;
     $("#dengluCode").show();
     $("#codeimg").attr({ src: s, alt: "扫码登录" });
+
     var count = setInterval(checkCode,1000);
-    function checkCode(){
-        $.ajax({
-            type: "get",
-            async: true,
-            url: "/checkLogin",
-            dataType: "json",
-            success:function (data) {
-                if(data.status==1){
-                    clearInterval(count);
-                    $("#dengluCode").hide();
-                    $(".register").hide();
-                    $(".in").hide();
-                    $(".loginbar").append('<p class=\"loginuser\">'+data.user.wxName+'</p>');
-                }
-            }
-        })
-    }
+    // function checkCode(){
+    //     $.ajax({
+    //         type: "get",
+    //         async: true,
+    //         url: "/checkLogin",
+    //         dataType: "json",
+    //         success:function (data) {
+    //             if(data.status==1) {
+    //                 clearInterval(count);
+    //                 showUserName(data.userName);
+    //             }
+    //         }
+    //     })
+    //     $(".tbox").addEventListener("fadeOut",clearInterval(count),false);
+    // }
+}
+function showUserName(o) {
+    $("#dengluCode").hide();
+    $(".register").hide();
+    $(".in").hide();
+    $(".loginbar").text(data.userName);
+    $(".loginbar").css("color","green");
 }
 var timeout = true;
 //启动及关闭按钮

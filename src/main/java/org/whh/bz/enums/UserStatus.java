@@ -11,6 +11,7 @@ public enum UserStatus {
     VIP_DAY_USER(2,"日会员每日20张"),
     VIP_MONTH_USER_(3,"月会员每日30张"),
     VIP_FOREVER_USER(10,"永久会员无限下载");
+
     private int code;
     private String msg;
 

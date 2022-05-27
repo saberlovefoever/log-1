@@ -9,6 +9,7 @@
     		<result property="imgKeywords" column="img_keywords"></result>
     		<result property="imgType" column="img_type"></result>
     		<result property="imgSize" column="img_size"></result>
+			<result property="imgHash" column="img_hash"></result>
     </resultMap>
     <select id="getAll" resultMap="getAllResult">
     	SELECT * FROM img LIMIT #{page},21;
@@ -16,14 +17,15 @@
     <select id="findByID" resultMap="getAllResult">
     	SELECT	* FROM	img  WHERE img_id =#{id};
     </select>
-	<insert id="add"  useGeneratedKeys="false"  >
+	<insert id="add"  useGeneratedKeys="false" >
 		INSERT  INTO
 						img (
 							img_id ,
 		    				img_update ,
 		    				img_keywords ,
 		    				img_type ,
-		    				img_size 
+		    				img_size ,
+						    img_hash
 						)
 		VALUES
 			<foreach collection="list"  item="a"   separator=","   index="0">				
@@ -32,7 +34,8 @@
 						now(),
 						#{a.imgKeywords},
 						#{a.imgType},
-						#{a.imgSize}
+						#{a.imgSize},
+						#{a.imgHash}
 						)			
 			</foreach>		
 			;
@@ -65,4 +68,5 @@
 		   ;
     </select>
 
-    </mapper>
+
+</mapper>

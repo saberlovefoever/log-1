@@ -24,11 +24,13 @@ public class Img implements Serializable {
   private String imgKeywords;
   private String imgType;
   private String imgSize;
+  private String imgHash;
 
-  public Img(int imgId, String imgKeywords, String imgType, String imgSize) {
+  public Img(int imgId, String imgKeywords, String imgType, String imgSize,String imgHash) {
     this.imgId = imgId;
     this.imgKeywords = imgKeywords;
     this.imgType = imgType;
     this.imgSize = imgSize;
+    this.imgHash = imgHash;
   }
 }

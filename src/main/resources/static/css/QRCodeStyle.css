@@ -1,0 +1,37 @@
+body, div, iframe, ul, ol, dl, dt, dd,
+h1, h2, h3, h4, h5, h6, p, pre, table,
+th, td, form, input, button, select,
+textarea {
+    margin: 0;padding: 0;
+    font-weight: normal;
+    font-style: normal;font-size: 100%;
+    font-family: inherit;
+}
+ol, ul {list-style: none;}
+img {border: 0;}
+body{
+    height: 100%;
+    background-image:  url(../img/wx_login_background.jpg) ;
+    Background-size:cover;
+    display: block;
+    background-repeat: no-repeat;
+}
+html{font-size:62.5%;display: block;height: 100%}
+body {font:normal 100% Arial,sans-serif;font-size:14px; font-size:1.4rem; }
+.code{
+    background-color: white;
+    width: 350px;
+    height: 500px;
+    display: block;
+    position: relative;
+    left: 570px;
+    top: 100px;
+}
+.info{
+    text-align: center;
+    display:block;
+    margin: auto;
+}
+.info img{
+
+}

@@ -1,6 +1,7 @@
 package org.whh.bz.dao;
 
 
+import org.apache.ibatis.annotations.Select;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
 import org.whh.bz.entity.Img;
@@ -19,4 +20,6 @@ public interface ImgDao {
 
 	List<Img> findByKeyword(@Param("keyword")String keyword, @Param("page")int page);
 
+	@Select("select ifnull((select 1 from img where img_hash = #{hash}),0)")
+	int findByHash(String hash);
 }

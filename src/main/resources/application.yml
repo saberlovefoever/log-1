@@ -1,5 +1,5 @@
 server:
-  port: 9999
+  port: 80
 spring:
   thymeleaf:
     cache: false
@@ -22,6 +22,10 @@ spring:
     multipart:
       max-request-size: 10MB
       max-file-size: 10MB
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 mybatis:
   configuration:
     cache-enabled: false
@@ -35,6 +39,6 @@ redis:
 logging:
   level:
     org.whh.bz.dao: debug
-lUrl: E:/ideaProject/temp/src/main/webapp/pics/
-sUrl: E:/ideaProject/temp/src/main/webapp/spics/
-mUrl: E:/ideaProject/temp/src/main/webapp/mpics/
+tUrl: E:/ideaProject/log/src/main/resources/static/tempics/
+lUrl: E:/ideaProject/log/src/main/resources/static/pics/
+

@@ -5,7 +5,8 @@
 <title>[[${pic.imgKeywords}]]</title>
 <meta name="keywords" content="${pic.imgKeywords}">
 <meta name="description" content="${pic.imgKeywords},4k高清壁纸,4k图片,4k,5k,6k,7k,8k高清壁纸下载,满足你的高清电脑壁纸需求">
-<link href="../css/style.css" rel="stylesheet" type="text/css">
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+    <link rel="icon" th:href="@{/img/pineapple.png}" type="image/x-icon" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 <script type="text/javascript" src="../js/jquery.min.js"></script>
 <script type="text/javascript" src="../js/common.js"></script>
@@ -49,7 +50,7 @@
     </form>
 </div>
 <div class="loginbar">
-    <a class="register" style="width:100px;">注册</a><a class="in">登录</a>
+    <a class="register" style="width:100px;">注册</a><a class="in" href="/getQRCodePage" target="_blank">登录</a>
     <input type="hidden" class="hiddenssid">
     <input type="hidden" class="logstatus">
     <input type="hidden" class="allowDownloadNum">
@@ -89,10 +90,10 @@
     </a>
 </div>
 
-<%--登录弹框--%>
+<!--    登录弹框-->
 <div class ="tbox" style="display:none" id="dengluCode">
         <img id="codeimg">
-    <div class="close">×</div>
+    <div class="close" id="nclose">×</div>
     <p class="p1">微信扫码登录，下载4K壁纸</p>
     <p ><b>登录后右上角充值会员,体验更优质服务↑↑↑</b></p>
     <div class="close">×</div>
