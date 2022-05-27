@@ -162,25 +162,24 @@ public class ImageController {
 			ioe.printStackTrace();
 		}
 	}
-	@RequestMapping(value = "/upPage" , method = RequestMethod.GET)
+	@RequestMapping(value = "/upload/index" , method = RequestMethod.GET)
 	private String uploads1(){
 		return "upload";
 	}
 
-	@RequestMapping(value = "/up" , method = RequestMethod.POST)
-	@ResponseBody
+	@RequestMapping(value = "/upload/result" , method = RequestMethod.POST)
 	private ModelAndView uploads1(
 			@Nullable @RequestParam(value = "imageFile")MultipartFile[] multipartFile,
 			HttpServletRequest req,HttpServletResponse resp,
 			@Nullable @RequestParam(value = "imgStyle") String[] selectStyle,
-			ModelAndView mav
+			@Nullable ModelAndView mav
 			) throws IllegalStateException, IOException, UploadException {
 		if (multipartFile.length==0||selectStyle.length==0) {
 			throw new UploadException(UploadStatus.NULL.getCode(),UploadStatus.NULL.getMsg());
 		}
 		UploadStatus up = imgService.add(multipartFile,selectStyle);
 		mav.addObject("msg",up.getMsg());
-		mav.setViewName("upload");
+		mav.setViewName("error");
 		return mav;
 	}
 }
