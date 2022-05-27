@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.whh.bz.entity.WxUser;
 import org.whh.bz.enums.UserStatus;
-import org.whh.bz.exceptionController.UserSessionException;
+import org.whh.bz.exceptions.UserSessionException;
 import org.whh.bz.service.RedisUserService;
 import org.whh.bz.service.UserService;
 import org.whh.bz.utils.UUIDGenerator;

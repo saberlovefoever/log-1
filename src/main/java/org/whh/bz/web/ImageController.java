@@ -15,9 +15,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.whh.bz.dao.ImgDao;
 import org.whh.bz.entity.Img;
 import org.whh.bz.entity.WxUser;
+import org.whh.bz.enums.UploadStatus;
 import org.whh.bz.enums.UserStatus;
+import org.whh.bz.exceptions.UploadException;
 import org.whh.bz.service.ImgService;
 import org.whh.bz.service.RedisUserService;
+import reactor.util.annotation.Nullable;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -165,20 +168,19 @@ public class ImageController {
 	}
 
 	@RequestMapping(value = "/up" , method = RequestMethod.POST)
+	@ResponseBody
 	private ModelAndView uploads1(
-			@RequestParam(value = "imageFile")MultipartFile[] multipartFile,
+			@Nullable @RequestParam(value = "imageFile")MultipartFile[] multipartFile,
 			HttpServletRequest req,HttpServletResponse resp,
-			@RequestParam(value = "imgStyle") String[] selectStyle
-			) throws IllegalStateException, IOException {
-		ModelAndView  mav=null;
+			@Nullable @RequestParam(value = "imgStyle") String[] selectStyle,
+			ModelAndView mav
+			) throws IllegalStateException, IOException, UploadException {
+		if (multipartFile.length==0||selectStyle.length==0) {
+			throw new UploadException(UploadStatus.NULL.getCode(),UploadStatus.NULL.getMsg());
+		}
+		UploadStatus up = imgService.add(multipartFile,selectStyle);
+		mav.addObject("msg",up.getMsg());
 		mav.setViewName("upload");
-		if (multipartFile.length==0) {
-			return mav;
-		}
-		List<String> list = imgService.add(multipartFile,selectStyle);
-		if (list.size()!=0){
-				mav.addObject("msg","部分成功上传！");
-		}
 		return mav;
 	}
 }

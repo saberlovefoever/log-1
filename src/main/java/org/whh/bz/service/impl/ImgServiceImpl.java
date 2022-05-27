@@ -2,6 +2,7 @@ package org.whh.bz.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.ibatis.annotations.Case;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.whh.bz.dao.ImgDao;
 import org.whh.bz.entity.Img;
+import org.whh.bz.enums.UploadStatus;
 import org.whh.bz.service.ImgService;
 import org.whh.bz.utils.FileUtils;
 import org.whh.bz.utils.ImageUtils;
@@ -41,9 +43,9 @@ public class ImgServiceImpl implements ImgService {
 
 	@Override
 	@Transactional
-	public List<String> add(MultipartFile[] multipartFile, String[] selectStyle) throws IOException {
-		List<Img> list = new ArrayList<>();					//要被持久化的imgs
-		List<String> repeatlist = new ArrayList<>();		//要返回前台的重复文件名、id
+	public UploadStatus add(MultipartFile[] multipartFile, String[] selectStyle) throws IOException {
+		List<Img> addlist = new ArrayList<>();					//要被持久化的imgs
+//		List<String> repeatlist = new ArrayList<>();		//要返回前台的重复文件名、id
 		int latestId = imgDao.getLatestId();
 		for (int i = 0; i < multipartFile.length; i++) {
 			String fileUrl = tUrl+i+".jpg";
@@ -52,8 +54,8 @@ public class ImgServiceImpl implements ImgService {
 			multipartFile[i].transferTo(file);
 			String s = ImageUtils.imgHash(file);
 
-			if (imgDao.findByHash(s)==1){
-				repeatlist.add(s);
+			if (imgDao.findByHash(s)==1){//重复，释放资源
+//				repeatlist.add(s);
 				multipartFile[i]=null;
 				continue;
 			}
@@ -65,21 +67,23 @@ public class ImgServiceImpl implements ImgService {
 			} catch (IOException e) {
 				log.error("(ｷ｀ﾟДﾟ´) OPS！上传期间遇到问题，宕机，非法访问？");
 			}
-			//入库
-			list.add(new Img(latestId+i+1,multipartFile[i].
+			//入库准备
+			addlist.add(new Img(latestId+i+1,multipartFile[i].
 					getOriginalFilename().substring(
 							0, multipartFile[i].getOriginalFilename().lastIndexOf(".")),
-							selectStyle[i] , "4k",s
-					)
-			);
+							selectStyle[i] , "4k",s));
 		}//for end
-		try {
-			imgDao.add(list);
-		}catch (Exception e){
-			log.error("插入失败");
-		}
 
-		return repeatlist;
+		int a = 0;
+		if((addlist.size()==0)) {
+			return UploadStatus.ALL_Repeat;
+		}else if(addlist.size()==multipartFile.length){
+			imgDao.add(addlist);
+			return UploadStatus.ALL_UP;
+		}else{
+			imgDao.add(addlist);
+			return UploadStatus.PART_UP;
+		}
 	}//Method end
 
 	@Override
