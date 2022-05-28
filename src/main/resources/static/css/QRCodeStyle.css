@@ -11,7 +11,7 @@ ol, ul {list-style: none;}
 img {border: 0;}
 body{
     height: 100%;
-    background-image:  url(../img/wx_login_background.jpg) ;
+    background-image:  url(/static/img/wx_login_background.jpg) ;
     Background-size:cover;
     display: block;
     background-repeat: no-repeat;
@@ -30,7 +30,7 @@ body {font:normal 100% Arial,sans-serif;font-size:14px; font-size:1.4rem; }
 .info{
     text-align: center;
     display:block;
-    margin: auto;
+    margin: 25px auto auto auto;
 }
 .info img{
 

@@ -4,12 +4,11 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.whh.bz.dao.ImgDao;
@@ -23,6 +22,7 @@ import org.whh.bz.service.RedisUserService;
 import reactor.util.annotation.Nullable;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -34,6 +34,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 //@ControllerAdvice  注解作用：全局异常处理  数据绑定  数据预处理
@@ -59,23 +60,34 @@ public class ImageController {
 		return mov;
 	}
 
-	//=================	IMAGEDetailes===================
-
-	/*此注解改变返回数据格式，并且直接写入response 正文
-	  不会经过视图解析器！！！！！！---->return "bian";改掉 */
 	@RequestMapping(value = "/page/{page}",method = RequestMethod.GET)
-	@ResponseBody
-	private ModelAndView index_num(HttpServletRequest request,ModelAndView mav,@PathVariable("page") int page) {
+	private ModelAndView index_num(HttpServletResponse resp,
+								   ModelAndView mav,@PathVariable("page") int page,
+								   @CookieValue @Nullable String tempLoginSession) {
+		//在页面域、cookie、redis存入匿名用户session
+		if (tempLoginSession==null){
+			tempLoginSession = UUID.randomUUID().toString();
+			Cookie cookie  = new Cookie("tempLoginSession",tempLoginSession);
+			cookie.setDomain("localhost:80");
+			cookie.setPath("/");
+			resp.addCookie(cookie);
+			resp.setContentType("utf-8");
+			resp.addHeader("Access-Control-Allow-Origin", "*");
+			resp.setContentType("html/plain");
+			redisUserService.addAnonymousUser(tempLoginSession);
+		}
 		List<Img> list = imgService.getAll(page);
 		mav.addObject("total", imgDao.getLatestId());	//图片总数
-		mav.setViewName("bian");
 		mav.addObject("list", list);
-		return mav;
+		mav.setViewName("bian");
+		return  mav;
 	}
+
 	@RequestMapping(value = "/bizhi/{id}",method = RequestMethod.GET)
-	private String details(@PathVariable("id") int id,HttpServletRequest request) {
+	private String details(@PathVariable("id") int id,HttpServletRequest request,@Nullable@CookieValue String tempLoginSession) {
 		Img  pic=  imgService.findById(id);
 		request.setAttribute("pic", pic);
+		request.setAttribute("tempLoginSession", tempLoginSession);
 		return "details";
 	}
 
@@ -88,8 +100,9 @@ public class ImageController {
 	 * @return
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/getUserState/{id}")
-	@ResponseBody
+//	@RequestMapping(value = "/getUserState/{id}")
+//	@ResponseBody
+//	手动验证
 	private String downloadCheck(@CookieValue(name = "sessionID",defaultValue = "0",required = false)String sessionID,
 							   HttpServletRequest req, HttpServletResponse resp,
 							   @PathVariable("id")String id) throws IOException {
@@ -113,10 +126,8 @@ public class ImageController {
 
 		return JSON.toJSONString(map);
 	}
-
 	/**
-	 * 图片下载
-	 */
+	 * 图片下载	 */
 	@RequestMapping(value = "/download/{id}")
 	private void imgDownload(HttpServletResponse resp,
 							 @PathVariable(value = "id")String id) throws IOException {
@@ -174,12 +185,13 @@ public class ImageController {
 			@Nullable @RequestParam(value = "imgStyle") String[] selectStyle,
 			@Nullable ModelAndView mav
 			) throws IllegalStateException, IOException, UploadException {
-		if (multipartFile.length==0||selectStyle.length==0) {
+		mav.setViewName("error");
+		if (multipartFile==null||selectStyle==null) {
 			throw new UploadException(UploadStatus.NULL.getCode(),UploadStatus.NULL.getMsg());
 		}
 		UploadStatus up = imgService.add(multipartFile,selectStyle);
 		mav.addObject("msg",up.getMsg());
-		mav.setViewName("error");
+
 		return mav;
 	}
 }

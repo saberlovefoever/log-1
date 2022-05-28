@@ -1,14 +1,18 @@
 package org.whh.bz.service.impl;
 
+import io.lettuce.core.RedisException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.whh.bz.entity.WxUser;
+import org.whh.bz.enums.UserStatus;
 import org.whh.bz.service.RedisUserService;
 
 import javax.annotation.Resource;
 import java.time.Duration;
 
 @Service
+@Slf4j
 public class RedisUserServiceImpl implements RedisUserService {
 
     @Resource
@@ -22,12 +26,25 @@ public class RedisUserServiceImpl implements RedisUserService {
     public int addUser(WxUser wxUser,String state) {
         try {
             redisTemplate.opsForHash().put(state,state,wxUser);
-            redisTemplate.expire(state, Duration.ofSeconds(60*5));
+            redisTemplate.expire(state, Duration.ofMinutes(2));
         }catch (Exception e){
             System.err.println("wxUser存入失败");
             e.printStackTrace();
             return 0;
         }
         return 1;
+    }
+
+    @Override
+    public boolean addAnonymousUser(String anonymous) {
+        try {
+            redisTemplate.opsForHash().put(anonymous,anonymous.hashCode(), UserStatus.NOT_LOGIN.getCode());
+            //2min超时  2*60*1000
+            redisTemplate.expire(anonymous,Duration.ofMinutes(2));
+        }catch (RedisException e){
+            log.error("redis 存入匿名用户失败");
+            return false;
+        }
+        return true;
     }
 }

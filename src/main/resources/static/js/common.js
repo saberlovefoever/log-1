@@ -5,64 +5,17 @@ $(function () {
     } catch (err) {
     }
 
-    $(".loginbar .register").click(function () {
-        weixinlogin();
-        return;
-        var bodyheight = jQuery(document).height();
-        $("#login_opacity_bg,.tbox").fadeIn(300);
-        $("#login_opacity_bg").css("height", bodyheight);
-        $(".tiptext").text("欢迎您注册彼岸图网");
-        $("#qq_register").text("QQ一键注册");
-        $("#weixin_register").text("微信一键注册");
-    });
-    $(".tbox .close ").click(function () {
-        $(".tbox,#login_opacity_bg").fadeOut(300);
-    });
     $(".downpic a").click(function () {
        var id = $(this).attr("data-id");
        /*检查登录状态 下载状态（还剩几张）*/
-        $.getJSON('/getUserState/'+id, function (data) {
+        $.getJSON('/downoad/'+id, function (data) {
             console.log(data)
             if (data.msg == 0) {
-                var bodyheight = jQuery(document).height();
-                $("#login_opacity_bg,.tbox").fadeIn(300);
-                $("#login_opacity_bg").css("height", bodyheight);
-            } else if (data.msg == 1) {
-                $("#footer").before('<div class="tbox viptps"><div class="close">×</div><div class="vipcon">今日下载量已用完，<a href="/e/member/buygroup/" title="打赏送会员">立即打赏送会员</a></div></div><div id="login_opacity_bg"></div>');
-                vipmsg();
-            } else if (data.msg == 2) {
-                $("#footer").before('<div class="tbox viptps"><div class="close">×</div><div class="vipcon">今天已下载20张，<a href="/e/member/buygroup/" title="打赏会员">打赏30元送终身会员！</a></div></div><div id="login_opacity_bg"></div>');
-                vipmsg()
-            } else if (data.msg == 3) {
-                if (data.pic) {
-                    var txt = '<br />3秒后继续下载';
-                    setTimeout('goback(\'' + data.pic + '\')', 3000);
-                } else {
-                    var txt = '';
-                }
-                $("#footer").before('<div class="tbox viptps"><div class="close">×</div><div class="vipcon">' + data.info + txt + '</div></div><div id="login_opacity_bg"></div>');
-                var bodyheight = jQuery(document).height();
-                $("#login_opacity_bg,.tbox").fadeIn(300);
-                $("#login_opacity_bg").css("height", bodyheight);
-                $(".tbox .close ").click(function () {
-                    $(".tbox,#login_opacity_bg").fadeOut(300).remove();
-                });
-            } else if (data.msg == 5) {
-                $("#footer").before('<div class="tbox viptps"><div class="close">×</div><div class="vipcon">一台电脑免费下载一张，<a href="/e/member/buygroup/" title="打赏送会员">立即打赏送会员</a></div></div><div id="login_opacity_bg"></div>');
-                vipmsg();
-               /* 未记数的下载*/
             } else if (data.msg == 12){
                 console.log("data.msg====>"+data.msg)
                 $('<iframe style="display:none;"/>').appendTo('html').attr('src', data.pic);
             /*未登录*/
-            }else if (data.msg == 11){
-                console.log(data)
-                alert(data.msgDetails)
-                weixinlogin(data.flag);
             }
-            // else {
-            //     $('<iframe style="display:none;"/>').appendTo('html').attr('src', data.pic);
-            // }
         });
     });
     $(".btn-phone,.btn-qq,.btn-group").hover(function () {
@@ -101,85 +54,10 @@ function checkLogin(){
         }
     })
 }
-/*打开页面自动询问*/
-$(function(){
-    checkLogin();
-})
 
-function weixinlogin() {
 
-    // 获取登录二维码
-    var a = $(".hiddenssid").val();
-    console.log(a);
-    var s ="/getQRcode/"+a;
-    $("#dengluCode").show();
-    $("#codeimg").attr({ src: s, alt: "扫码登录" });
 
-    var count = setInterval(checkCode,1000);
-    // function checkCode(){
-    //     $.ajax({
-    //         type: "get",
-    //         async: true,
-    //         url: "/checkLogin",
-    //         dataType: "json",
-    //         success:function (data) {
-    //             if(data.status==1) {
-    //                 clearInterval(count);
-    //                 showUserName(data.userName);
-    //             }
-    //         }
-    //     })
-    //     $(".tbox").addEventListener("fadeOut",clearInterval(count),false);
-    // }
-}
-function showUserName(o) {
-    $("#dengluCode").hide();
-    $(".register").hide();
-    $(".in").hide();
-    $(".loginbar").text(data.userName);
-    $(".loginbar").css("color","green");
-}
-var timeout = true;
-//启动及关闭按钮
-function queryorder(id) {
-    $.ajax({
-        type: "get",
-        async: false,
-        url: "/e/extend/weixin/",
-        data: {
-            "enews": "check"
-        },
-        dataType: "jsonp",
-        jsonp: "jsonpcallback",
-        success: function(data) {
-            // console.log(data);
-            if (data.status == 1) {
-                location.reload();
-            } else if (data.status == 2) {
-                timeout = false;
-                alert("会员未审核，不可用此登录");
-                $(".wxdlqrcode").html('');
-            }
-        }
-    });
-}
 
-function goback(url) {
-    $('<iframe style="display:none;"/>').appendTo('html').attr('src', url);
-}
-
-function vipmsg() {
-    var bodyheight = jQuery(document).height();
-    $("#login_opacity_bg,.tbox").fadeIn(300);
-    $("#login_opacity_bg").css("height", bodyheight);
-    $(".tbox .close ").click(function () {
-        $(".tbox,#login_opacity_bg").fadeOut(300);
-        window.location.href = "/e/member/buygroup/";
-    });
-}
-
-function viptbox() {
-}
 
 (function (a, b, c, d) {
     var e = a(b);
