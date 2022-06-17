@@ -12,6 +12,7 @@ public enum UploadStatus {
     NULL(0,"输入为空"),
     ALL_Repeat(-1,"全部重复");
 
+
     private int code;
     private String msg;
 
