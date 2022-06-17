@@ -20,7 +20,7 @@ public class ControllerInterceptorConfig extends WebMvcConfigurationSupport {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(l).addPathPatterns("/download/**");
+        registry.addInterceptor(l).addPathPatterns("/download/**","/announce","/announce.php");
     }
 
     @Override

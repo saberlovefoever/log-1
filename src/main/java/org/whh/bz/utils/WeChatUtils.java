@@ -6,8 +6,11 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.json.JSONObject;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.whh.bz.config.WechatTrustManager;
 
+import javax.annotation.Resource;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -24,12 +27,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
+@Configuration
 public class WeChatUtils {
-    private  static final String APPSECRET = "0f21d5a489c6395b3f6a33dedd73721e";
-    private  static final String APPID = "wx1de4bce0ab328e44";
+    private  static final String APPSECRET = "6861067c0e52a07136d001e12d54e58a";
+    private  static final String APPID = "wxe637125bd257100b";
     private  static final String SCOPE = "snsapi_userinfo";
     private  static final String snsapi_login = "snsapi_login";
-    private  static final String REDIRECT_URI ="https://42s4204l85.goho.co/page/1";
+    private  static final String REDIRECT_URI = "https://42s4204l85.goho.co/wxTest";
     //to get qrccode
     private static final String getWeChatCode = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
     //to get token
@@ -38,6 +42,9 @@ public class WeChatUtils {
     private static final String  getWechatUserinfo= "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
 
     private static final String urlToQRCode= "https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
+//    zkmFw3PQgXsXd62mVSJlvoqinehtcdlRIE8Cf9lttne
+//    测试号验证
+
 
     public static String urlToQRCode(String sessionID){
         return urlToQRCode.replace("APPID",APPID).replace("REDIRECT_URI",REDIRECT_URI).replace("SCOPE",snsapi_login).replace("STATE",sessionID);
@@ -45,20 +52,17 @@ public class WeChatUtils {
     /**
      * 获取access-token
      * @param code
-     * @param req
      * @return
      */
-    public static JSONObject getWeChatToken(String code,String State,HttpServletRequest req){
+    public static String getWeChatToken( String code, String State){
         JSONObject jsonObject = null;
-        String s = getWeChatCode.replace("APPID",APPID).replace("SECRET",APPSECRET).replace("CODE",code);
-        jsonObject = httpsRequest(s, "get",null);
-        return jsonObject;
+        String url = getWechatToken.replace("APPID",APPID).replace("SECRET",APPSECRET).replace("CODE",code);
+        return url;
     }
-    public static JSONObject getWeChatUserinfo(String token,String openID,HttpServletRequest req){
+    public static String getWeChatUserinfo(String token,String openID){
         JSONObject jsonObject = null;
         String s = getWechatUserinfo.replace("ACCESS_TOKEN",token).replace("OPENID",openID);
-        jsonObject = httpsRequest(s, "get",null);
-        return jsonObject;
+        return s;
     }
 
     /**
@@ -68,7 +72,7 @@ public class WeChatUtils {
      * @throws IOException
      * @throws WriterException
      */
-    public  static void writeQRCodeToStream(String session,HttpServletResponse resp) throws IOException, WriterException {
+    public  static boolean writeQRCodeToStream(String session,HttpServletResponse resp) throws IOException, WriterException {
         String url=getWeChatCode.replace("APPID",APPID).replace("REDIRECT_URI",REDIRECT_URI).replace("SCOPE",SCOPE).replace("STATE",session);
         resp.setHeader("Pragma", "No-cache"); // 设置响应头信息，告诉浏览器不要缓存此内容
         resp.setHeader("Cache-Control", "no-cache");
@@ -77,6 +81,7 @@ public class WeChatUtils {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 350, 350);
         MatrixToImageWriter.writeToStream(bitMatrix,"png",resp.getOutputStream());
+        return true;
     }
 
     /**

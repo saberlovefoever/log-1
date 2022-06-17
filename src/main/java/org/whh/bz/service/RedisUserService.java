@@ -1,6 +1,7 @@
 package org.whh.bz.service;
 
 
+import org.springframework.stereotype.Service;
 import org.whh.bz.entity.WxUser;
 
 public interface RedisUserService {

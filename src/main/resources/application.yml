@@ -40,5 +40,5 @@ logging:
   level:
     org.whh.bz.dao: debug
 
-tUrl: E:/ideaProject/log/src/main/resources/static/tempics/
-lUrl: E:/ideaProject/log/src/main/resources/static/pics/
+tUrl: "E:/ideaProject/log/src/main/resources/static/tempics/"
+lUrl: "E:/ideaProject/log/src/main/resources/static/pics/"

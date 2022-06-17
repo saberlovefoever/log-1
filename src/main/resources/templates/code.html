@@ -9,10 +9,23 @@
 </head>
 <body>
 <div class="code">
-    <img src="/showQRCode">
+    <img title="扫码登录" src="/showQRCode">
     <div class="info"><p>微信扫码登录</p><p class="timeover">有效时间*分钟。请尽快登录</p></div>
 
 </div>
 
 </body>
+<script>
+    var ws = new WebSocket("ws://localhost:80/wsCode");
+    ws.onopen=function (evt) {
+        ws.send("hi server ws .");
+    }
+    ws.onmessage=function(evt){
+        console.log(evt)
+        if(evt.data.status==-1){
+            ws.close()
+            this.close();
+        }
+    }
+</script>
 </html>

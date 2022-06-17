@@ -37,7 +37,6 @@
             <input type="text" name="keyboard" class = "keyboard"value="请输入壁纸名称" onFocus="if(this.value=='请输入壁纸名称') this.value='';" onBlur="if(this.value=='') this.value='请输入壁纸名称';" autocomplete="off" />
             <input name="submit"type="submit" value="" class="sub"  />
         </p>
-        <input name="tempLoginSession" type="hidden" th:value="${tempLoginSession}" />
         <input name="tbname" type="hidden" value="photo" />
         <input name="show" type="hidden" value="title" />
     </form>
@@ -57,15 +56,17 @@
 		<div class="photo-hd"><h1>[[${pic.imgKeywords}]]</h1></div>
 		<div class="photo-pic">
             <a href="" id="img">
-                <img th:src="@{/static/mpics/{s}(s=${pic.imgId}+'.jpg')}"
+                <img th:src="@{/getOne/{a}(a=${pic.imgId})}"
                      th:data-pic="${pic.imgId}"  th:alt="${pic.imgKeywords}"
                      th:title="${pic.imgKeywords}">
             </a>
         </div>
 <div class="photo-tags">热门搜索：<a href="http://pic.netbian.com/e/search/result/?searchid=25" target="_blank">星空壁纸</a> <a href="http://pic.netbian.com/e/search/result/?searchid=2446" target="_blank">带鱼屏壁纸</a> <a href="http://pic.netbian.com/e/search/result/?searchid=1224" target="_blank">4K壁纸</a> <a href="http://pic.netbian.com/e/search/result/?searchid=2453" target="_blank">5K壁纸</a> <a href="http://pic.netbian.com/e/search/result/?searchid=377" target="_blank">手机壁纸</a> <a href="http://www.4kbizhi.com/" target="_blank">高清壁纸</a> <a href="http://www.netbian.com/1920x1080/" target="_blank">1920*1080壁纸</a> <a href="https://zhutix.com/tag/win10-zhuti/" target="_blank">Win10主题</a></div><a href="https://zhutix.com/tag/win10-zhuti/" target="_blank">
 	</a></div><a href="https://zhutix.com/tag/win10-zhuti/" target="_blank">
-</a><div class="side"><a href="https://zhutix.com/tag/win10-zhuti/" target="_blank">
-	</a><div class="downpic"><a href="https://zhutix.com/tag/win10-zhuti/" target="_blank"></a><a href="javascript:;" data-id="${pic.imgId}">下载原图(3840x2160)</a></div>
+</a><div class="side"><a href="https://zhutix.com/tag/win10-zhuti/" target="_blank"></a>
+    <div class="downpic">
+        <a target="_blank" th:href="@{/download/{d}(d=${pic.imgId})}" th:data-id="${pic.imgId}">下载原图(3840x2160)</a>
+    </div>
     		<div class="infor">
               <p>分类 <span> <a target="_blank" href="/4kyouxi/">4K游戏</a> </span> </p>
               <p>尺寸<span>3840x2160</span></p>

@@ -1,9 +1,8 @@
 package org.whh.bz.web;
 
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,28 +12,19 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.whh.bz.dao.ImgDao;
 import org.whh.bz.entity.Img;
-import org.whh.bz.entity.WxUser;
 import org.whh.bz.enums.UploadStatus;
-import org.whh.bz.enums.UserStatus;
 import org.whh.bz.exceptions.UploadException;
 import org.whh.bz.service.ImgService;
-import org.whh.bz.service.RedisUserService;
+import org.whh.bz.utils.ImageUtils;
 import reactor.util.annotation.Nullable;
-
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 
 //@ControllerAdvice  注解作用：全局异常处理  数据绑定  数据预处理
@@ -45,14 +35,18 @@ public class ImageController {
 	private ImgService imgService;
 	@Resource
 	private ImgDao imgDao;
-	@Resource
-	private RedisUserService redisUserService;
+//	@Resource
+//	private RedisUserService redisUserService;
+	@Value("${lUrl}")
+	private String picUrl;
+
+	private static void test(){
+
+	}
 	//	图片搜索
 	@RequestMapping(value={"/search"},method = RequestMethod.POST)
 	private ModelAndView search(ModelAndView mov,HttpServletRequest req,@RequestParam("keyboard") String keyboard) {
-//		keyboard要进行数据校验
 		StringBuffer sb =new StringBuffer(keyboard.trim());
-
 		List<Img>  list = imgService.findByKeyword( sb.toString(),1);
 		req.setAttribute("list", list);
 		req.setAttribute("keyboard", keyboard);
@@ -60,22 +54,12 @@ public class ImageController {
 		return mov;
 	}
 
+	//图片浏览+restful分页
 	@RequestMapping(value = "/page/{page}",method = RequestMethod.GET)
 	private ModelAndView index_num(HttpServletResponse resp,
-								   ModelAndView mav,@PathVariable("page") int page,
-								   @CookieValue @Nullable String tempLoginSession) {
+								   ModelAndView mav,@PathVariable("page") int page
+								  ) {
 		//在页面域、cookie、redis存入匿名用户session
-		if (tempLoginSession==null){
-			tempLoginSession = UUID.randomUUID().toString();
-			Cookie cookie  = new Cookie("tempLoginSession",tempLoginSession);
-			cookie.setDomain("localhost:80");
-			cookie.setPath("/");
-			resp.addCookie(cookie);
-			resp.setContentType("utf-8");
-			resp.addHeader("Access-Control-Allow-Origin", "*");
-			resp.setContentType("html/plain");
-			redisUserService.addAnonymousUser(tempLoginSession);
-		}
 		List<Img> list = imgService.getAll(page);
 		mav.addObject("total", imgDao.getLatestId());	//图片总数
 		mav.addObject("list", list);
@@ -83,61 +67,36 @@ public class ImageController {
 		return  mav;
 	}
 
-	@RequestMapping(value = "/bizhi/{id}",method = RequestMethod.GET)
-	private String details(@PathVariable("id") int id,HttpServletRequest request,@Nullable@CookieValue String tempLoginSession) {
+//	图片缩放写入流
+	@RequestMapping(value = "/sample/{id}",method = RequestMethod.GET)
+	private void sample(@PathVariable("id") int id,
+						HttpServletResponse resp
+	) throws IOException {
+		ImageUtils.writeToReq(resp,id,0.7);
+	}
+//   单图片
+	@RequestMapping(value = "/one/{id}",method = RequestMethod.GET)
+	private String details(@PathVariable("id") int id,HttpServletRequest request) {
 		Img  pic=  imgService.findById(id);
 		request.setAttribute("pic", pic);
-		request.setAttribute("tempLoginSession", tempLoginSession);
 		return "details";
 	}
-
-	/**
-	 * 下载验证
-	 * @param sessionID
-	 * @param req
-	 * @param resp
-	 * @param id
-	 * @return
-	 * @throws IOException
-	 */
-//	@RequestMapping(value = "/getUserState/{id}")
-//	@ResponseBody
-//	手动验证
-	private String downloadCheck(@CookieValue(name = "sessionID",defaultValue = "0",required = false)String sessionID,
-							   HttpServletRequest req, HttpServletResponse resp,
-							   @PathVariable("id")String id) throws IOException {
-			Map map =new HashMap();
-
-			/*需要补 用户验证登录代码*/
-			WxUser wxUser = redisUserService.findUser(sessionID);
-			if(wxUser==null||"0".equals(sessionID)){
-				map.put("status", UserStatus.NOT_LOGIN.getCode());
-				map.put("msg", UserStatus.NOT_LOGIN.getMsg());
-				map.put("user", wxUser);
-				return JSON.toJSONString(map);
-			}
-			//会员业务。。会员等级。。是否到期。。省略
-				map.put("status", UserStatus.NOT_LOGIN.getCode());
-				map.put("msg", UserStatus.NOT_LOGIN.getMsg());
-				map.put("user", wxUser);
-				Base64.Encoder e = Base64.getEncoder();
-				String idEncode = e.encodeToString(id.getBytes());
-				map.put("pic", "/download/" + idEncode);
-
-		return JSON.toJSONString(map);
+	@RequestMapping(value = "/getOne/{id}",method = RequestMethod.GET)
+	private void one(@PathVariable("id") int id,HttpServletResponse resp,HttpServletRequest req) throws IOException {
+		ImageUtils.writeToReq(resp,id,0.7);
 	}
+
 	/**
-	 * 图片下载	 */
+	 * 图片下载
+	 *
+	 * */
 	@RequestMapping(value = "/download/{id}")
 	private void imgDownload(HttpServletResponse resp,
 							 @PathVariable(value = "id")String id) throws IOException {
-		String idDecode = new String(Base64.getDecoder().decode(id));
-		System.out.println(idDecode);
-		Img img= imgService.findById(Integer.valueOf(idDecode));
+		Img img= imgService.findById(Integer.valueOf(id));
 		if (img==null){
 			throw new IllegalStateException();
 		}
-
 		resp.setHeader("Pragma", "No-cache"); // 设置响应头信息，告诉浏览器不要缓存此内容
 		resp.setHeader("Cache-Control", "no-cache");
 		resp.setHeader("Content-Disposition",
@@ -156,28 +115,12 @@ public class ImageController {
 		os.close();
 		fis.close();
 	}
-	/**
-	 * 响应输出图片文件
-	 * @param response
-	 * @param imgFile
-	 */
-	private void responseFile(HttpServletResponse response, File imgFile) {
-		try(InputStream is = new FileInputStream(imgFile);
-			OutputStream os = response.getOutputStream();){
-			byte [] buffer = new byte[1024]; // 图片文件流缓存池
-			while(is.read(buffer) != -1){
-				os.write(buffer);
-			}
-			os.flush();
-		} catch (IOException ioe){
-			ioe.printStackTrace();
-		}
-	}
+	//上传
 	@RequestMapping(value = "/upload/index" , method = RequestMethod.GET)
 	private String uploads1(){
 		return "upload";
 	}
-
+//	上传响应
 	@RequestMapping(value = "/upload/result" , method = RequestMethod.POST)
 	private ModelAndView uploads1(
 			@Nullable @RequestParam(value = "imageFile")MultipartFile[] multipartFile,

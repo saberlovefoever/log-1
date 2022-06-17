@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userDao;
+
     @Override
     public WxUser findByOpenid(String s) {
         return userDao.findByOpenid(s);

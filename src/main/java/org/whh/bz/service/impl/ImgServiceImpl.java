@@ -26,8 +26,7 @@ import java.util.List;
 public class ImgServiceImpl implements ImgService {
 	@Resource
 	public ImgDao imgDao;
-	@Resource
-	private RedisTemplate<String,Img> redisTemplate;
+
 	@Value("${tUrl}")
 	private  String tUrl;
 	@Value("${lUrl}")

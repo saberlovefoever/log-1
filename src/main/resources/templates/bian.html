@@ -44,9 +44,9 @@
 <div class="slist">
 <ul  class="clearfix">
  	<li th:each='a:${list}'>
- 			<a th:href="'/bizhi/'+${a.imgId}" th:title="${a.imgKeywords}" target="_blank" class="img">
+ 			<a th:href="@{/one/{a}(a=${a.imgId})}" th:data-imgid ="${a.imgKeywords}" th:title="${a.imgKeywords}" target="_blank" class="img">
 				<span>
-					<img th:src="@{/static/spics/{imgid}(imgid=${a.imgId}+'.jpg')}" th:alt="${a.imgKeywords}">
+					<img th:src="@{/sample/{s}(s=${a.imgId})}" th:alt="${a.imgKeywords}">
 				</span>
 	 			<b>[[${a.imgKeywords}]]</b>
  			</a>

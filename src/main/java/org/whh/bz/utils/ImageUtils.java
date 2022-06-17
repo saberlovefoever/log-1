@@ -2,18 +2,37 @@ package org.whh.bz.utils;
 
 
 import com.zaxxer.hikari.HikariDataSource;
+import jdk.dynalink.beans.StaticClass;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+@Configuration
 public class ImageUtils {
+
+    private static String url ="E:/ideaProject/log/src/main/resources/static/pics/";
+
+    public static void writeToReq(HttpServletResponse resp,int id,double factor) throws IOException {
+    BufferedImage target =  ImageIO.read(new File(url+id+".jpg"));
+    BufferedImage bufferedImage = new BufferedImage((int)(target.getWidth()*factor),(int)(target.getHeight()*factor),BufferedImage.TYPE_INT_RGB);
+    bufferedImage.getGraphics().drawImage(target,0,0,(int)(target.getWidth()*factor),(int)(target.getHeight()*factor),null);
+    OutputStream o = resp.getOutputStream();
+    resp.setContentType("image/jpg");
+    resp.setContentType("utf-8");
+    resp.setHeader("Content-Disposition","attachment;filename="+id+".jpg");
+    ImageIO.write(bufferedImage,"jpg",o);
+}
+
     /**
      * dhash
      * 步骤：缩略图  计算灰度  比较差值
@@ -21,8 +40,7 @@ public class ImageUtils {
      */
     public  static  String imgHash(File f) throws IOException {
         BufferedImage img = new BufferedImage(9,8,BufferedImage.TYPE_INT_RGB);
-        BufferedImage srcImg = ImageIO.read(f);
-        img.getGraphics().drawImage(srcImg,0,0,9,8,null);
+        img.getGraphics().drawImage( ImageIO.read(f),0,0,9,8,null);
         int s []=new int[9*8];
         int index = 0;
         for (int i = 0; i < 9; i++) {//count gray

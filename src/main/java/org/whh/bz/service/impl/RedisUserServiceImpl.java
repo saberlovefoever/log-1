@@ -11,8 +11,8 @@ import org.whh.bz.service.RedisUserService;
 import javax.annotation.Resource;
 import java.time.Duration;
 
-@Service
 @Slf4j
+@Service
 public class RedisUserServiceImpl implements RedisUserService {
 
     @Resource
@@ -20,12 +20,13 @@ public class RedisUserServiceImpl implements RedisUserService {
 
     @Override
     public WxUser findUser(String sessionID) {
-           return (WxUser) redisTemplate.opsForHash().get(sessionID, sessionID);
+
+        return (WxUser) redisTemplate.opsForHash().get(sessionID+"User", (sessionID+"User").hashCode());
     }
     @Override
     public int addUser(WxUser wxUser,String state) {
         try {
-            redisTemplate.opsForHash().put(state,state,wxUser);
+            redisTemplate.opsForHash().put(state+"User",(state+"User".hashCode()),wxUser);
             redisTemplate.expire(state, Duration.ofMinutes(2));
         }catch (Exception e){
             System.err.println("wxUser存入失败");
@@ -40,7 +41,7 @@ public class RedisUserServiceImpl implements RedisUserService {
         try {
             redisTemplate.opsForHash().put(anonymous,anonymous.hashCode(), UserStatus.NOT_LOGIN.getCode());
             //2min超时  2*60*1000
-            redisTemplate.expire(anonymous,Duration.ofMinutes(2));
+            redisTemplate.expire(anonymous,Duration.ofMinutes(1));
         }catch (RedisException e){
             log.error("redis 存入匿名用户失败");
             return false;
