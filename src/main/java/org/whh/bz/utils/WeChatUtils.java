@@ -29,11 +29,11 @@ import java.security.SecureRandom;
 
 @Configuration
 public class WeChatUtils {
-    private  static final String APPSECRET = "6861067c0e52a07136d001e12d54e58a";
-    private  static final String APPID = "wxe637125bd257100b";
-    private  static final String SCOPE = "snsapi_userinfo";
-    private  static final String snsapi_login = "snsapi_login";
-    private  static final String REDIRECT_URI = "https://42s4204l85.goho.co/wxTest";
+    private  static transient final String APPSECRET = "6861067c0e52a07136d001e12d54e58a";
+    private  static transient final String APPID = "wxe637125bd257100b";
+    private  static transient final String SCOPE = "snsapi_userinfo";
+    private  static transient final String snsapi_login = "snsapi_login";
+    private  static transient final String REDIRECT_URI = "https://42s4204l85.goho.co/wxTest";
     //to get qrccode
     private static final String getWeChatCode = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect";
     //to get token
