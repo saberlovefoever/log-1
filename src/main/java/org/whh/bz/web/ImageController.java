@@ -1,6 +1,7 @@
 package org.whh.bz.web;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
@@ -31,18 +32,21 @@ import java.util.List;
 @Controller
 @Slf4j
 public class ImageController {
-	@Resource
-	private ImgService imgService;
-	@Resource
-	private ImgDao imgDao;
-//	@Resource
-//	private RedisUserService redisUserService;
-	@Value("${lUrl}")
-	private String picUrl;
 
-	private static void test(){
+	private final ImgService imgService;
 
+	private final ImgDao imgDao;
+
+	@Value("${picUrl}")
+	private String url;
+
+	@Autowired
+	public ImageController(ImgService imgService,ImgDao imgDao) {
+		this.imgService = imgService;
+		this.imgDao = imgDao;
 	}
+
+
 	//	图片搜索
 	@RequestMapping(value={"/search"},method = RequestMethod.POST)
 	private ModelAndView search(ModelAndView mov,HttpServletRequest req,@RequestParam("keyboard") String keyboard) {
@@ -72,7 +76,7 @@ public class ImageController {
 	private void sample(@PathVariable("id") int id,
 						HttpServletResponse resp
 	) throws IOException {
-		ImageUtils.writeToReq(resp,id,0.7);
+		ImageUtils.writeToReq(resp,id,0.7,url);
 	}
 //   单图片
 	@RequestMapping(value = "/one/{id}",method = RequestMethod.GET)
@@ -83,7 +87,7 @@ public class ImageController {
 	}
 	@RequestMapping(value = "/getOne/{id}",method = RequestMethod.GET)
 	private void one(@PathVariable("id") int id,HttpServletResponse resp,HttpServletRequest req) throws IOException {
-		ImageUtils.writeToReq(resp,id,0.7);
+		ImageUtils.writeToReq(resp,id,0.7,url);
 	}
 
 	/**

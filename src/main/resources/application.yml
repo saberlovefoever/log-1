@@ -12,7 +12,7 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://192.168.1.15:3306/whh?characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://192.168.1.9:3306/whh?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
@@ -40,5 +40,6 @@ logging:
   level:
     org.whh.bz.dao: debug
 
-tUrl: "E:/ideaProject/log/src/main/resources/static/tempics/"
-lUrl: "E:/ideaProject/log/src/main/resources/static/pics/"
+picUrl: "F:/log-1/src/main/resources/static/pics/"
+tUrl: "F:/log-1/src/main/resources/static/tempics/"
+lUrl: "F:/log-1/src/main/resources/static/pics/"

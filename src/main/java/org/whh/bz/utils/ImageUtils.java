@@ -2,14 +2,13 @@ package org.whh.bz.utils;
 
 
 import com.zaxxer.hikari.HikariDataSource;
-import jdk.dynalink.beans.StaticClass;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,15 +19,15 @@ import java.util.List;
 @Configuration
 public class ImageUtils {
 
-    private static String url ="E:/ideaProject/log/src/main/resources/static/pics/";
 
-    public static void writeToReq(HttpServletResponse resp,int id,double factor) throws IOException {
+
+    public  static void writeToReq(HttpServletResponse resp,int id,double factor,String url) throws IOException {
     BufferedImage target =  ImageIO.read(new File(url+id+".jpg"));
     BufferedImage bufferedImage = new BufferedImage((int)(target.getWidth()*factor),(int)(target.getHeight()*factor),BufferedImage.TYPE_INT_RGB);
     bufferedImage.getGraphics().drawImage(target,0,0,(int)(target.getWidth()*factor),(int)(target.getHeight()*factor),null);
     OutputStream o = resp.getOutputStream();
     resp.setContentType("image/jpg");
-    resp.setContentType("utf-8");
+    resp.setCharacterEncoding("utf-8");
     resp.setHeader("Content-Disposition","attachment;filename="+id+".jpg");
     ImageIO.write(bufferedImage,"jpg",o);
 }
