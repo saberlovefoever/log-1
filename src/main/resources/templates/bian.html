@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html  xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8" />
-<title>资源分享</title>
-<meta name="keywords" content="壁纸图片素材" />
-<meta name="description" content="壁纸" />
-<link th:href="@{/static/css/style.css}" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" th:href="@{/static/css/player.css}">
-<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-<script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
-<script th:src="@{/static/js/jquery.SuperSlide.js}"></script>
-<link rel="icon" th:href="@{/static/img/pineapple.png}" type="image/x-icon" />
+	<meta charset="UTF-8" />
+	<title>资源分享</title>
+	<meta name="keywords" content="壁纸图片素材" />
+	<meta name="description" content="壁纸" />
+
+	<link th:href="@{/static/css/style.css}" rel="stylesheet" type="text/css" />
+		<link rel="icon" th:href="@{/static/img/pineapple.png}" type="image/x-icon" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+	<script type="text/javascript" th:src="@{/static/js/jquery.min.js}"></script>
+		<script type="text/javascript" th:src="@{/static/js/common.js}"></script>
+
 </head>
 <body>
 <!--头-->
@@ -19,14 +20,17 @@
 <div class="head">
 <ul class="nav">
 	<li><a class="nav-link" href="/">导航页</a></li>
-	<li><a class="nav-link" href="/page/1">壁纸</a></li>
+	<li><a class="nav-link" href="/wallpaper/page/1">壁纸</a></li>
 	<li><a class="nav-link" href="/">评书</a></li>
 	<li><a class="nav-link" href="/">视频</a></li>
 </ul>
 <div class="search">
- <form  method="post" name="schform" id="schform" action="/search" enctype="application/x-www-form-urlencoded">
+ <form  method="get" name="schform" id="schform" action="/wallpaper/search/1" enctype="application/x-www-form-urlencoded">
 	<p>
-	<input type="text" name="keyboard" class = "keyboard"value="输入关键字->回车" onFocus="if(this.value=='输入关键字->回车') this.value='';" onBlur="if(this.value=='') this.value='输入关键字->回车';" autocomplete="off" />
+	<input type="text" name="keyboard" class = "keyboard"  id = "keyboard"value="输入关键字->回车"
+		   onFocus="if(this.value=='输入关键字->回车') this.value='';"
+		   onBlur="if(this.value=='') this.value='输入关键字->回车';"
+		   autocomplete="off" />
 	<input name="submit"type="submit" value="" class="sub"  />
 	</p>
 	 <input name="tempLoginSession" type="hidden"  />
@@ -43,76 +47,91 @@
 
 <div class="slist">
 <ul  class="clearfix">
- 	<li th:each='a:${list}'>
- 			<a th:href="@{/one/{a}(a=${a.imgId})}" th:data-imgid ="${a.imgKeywords}" th:title="${a.imgKeywords}" target="_blank" class="img">
+ 	<li th:each="a:${imglists}">
+ 			<a th:href="@{/wallpaper/detail/{a}(a=${a.imgId})}" th:data-imgid ="${a.imgKeywords}" th:title="${a.imgKeywords}" target="_blank" class="img">
 				<span>
-					<img th:src="@{/sample/{s}(s=${a.imgId})}" th:alt="${a.imgKeywords}">
+					<img th:src="@{/wallpaper/sample/{s}(s=${a.imgId})}" th:alt="${a.imgKeywords}">
 				</span>
 	 			<b>[[${a.imgKeywords}]]</b>
  			</a>
  	</li>
- </ul> 
+ </ul>
 </div>
 
-<!-- 分页 -->
-<div class="page" id="page"></div>
+	<!-- 分页 -->
+	<div class="page" id="page"></div>
 </div>
 </div>
-<div id="footer">
-<a>还未备案</a>
-</div>
-
-
 
 <script>
-	var normal_title = document.title;
-	document.addEventListener('visibilitychange', function () {
-		if (document.visibilityState == 'hidden') {
-        document.title = '你怎么走了.....Σ(ﾟдﾟlll)！';
-    } else {document.title = normal_title;}
-});
-</script>
-<script type="text/javascript">
-	var  total = [[${total}]];
-	console.log(total);
-	var current =window.location.href.split("/page/")[1].split("")[0];
-	console.log(current);
-	var page = document.getElementById("page");
-	var str="";
-	var currentPage= "<b>"+current+"</b>";
-	var last = parseInt(total%21==0?total/21:(total/21+1));
-	console.log("last:"+last);
-	if(total<=21){
-		page.innerHTML = currentPage;
-		}else{
-	if(current==1){
-			str+=currentPage;
-			for (var i = 2; i < last+1; i++) {
-				str+="<a href=\"../page/"+i+"\">"+i+"</a>";
+	$(function (){
+		let total = [[${total}]];
+		let current = [[${currentPage}]];
+		let perPage = [[${perPage}]];
+		let page = $("#page");
+		let keyboard = window.location.href.split(current)[1];
+		console.log(keyboard)
+		let currentUrl = window.location.href.split(current)[0]
+		let last = parseInt((total % perPage == 0 ? total / perPage : (total / perPage + 1)));
+		for (let i = 1; i <=last; i++) {
+			if (i == parseInt(current)) {
+				let $markB = $('<b></b>');
+				$markB.html(i);
+				page.append($markB)
+				continue;
 			}
-				str +="<a href=\"../page/"+last+"\">尾页</a>";
-		}else if(current==last){
-			str+="<a href=\"../page/"+1+"\">首页</a>";
-			for (var i= 1; i<last; i++) {
-				str+="<a href=\"../page/"+i+"\">"+i+"</a>";
-				console.log(str);
-			}		
-			str = str+currentPage;
-		}else{
-			str+="<a href=\"../page/"+1+"\">首页</a>";
-			for (var i= 1; i<current; i++) {
-				str+="<a href=\"../page/"+i+"\">"+i+"</a>";
-			}		
-			str+=currentPage;
-			for (var i= current+1; i<last+1; i++) {
-				str+="<a href=\"../page/"+i+"\">"+i+"</a>";
-			}		
-			str +="<a href=\"../page/"+last+"\">尾页</a>";
+			let  $markA = $('<a></a>');
+			let demo1 = currentUrl.toString()+i.toString()+keyboard.toString()
+			$markA.attr("href",demo1)
+			$markA.html(i)
+			page.append($markA)
 		}
-	page.innerHTML = str;
-	}
-
+	}())
 </script>
 
 </body>
 </html>
+
+<!--<script type="text/javascript">-->
+<!--	var keyboard = $(".keyboard").text();-->
+<!--	var  total = [[${total}]];-->
+<!--	console.log(total);-->
+<!--	var current = [[${currentPage}]]-->
+<!--	console.log(current);-->
+<!--	var page = document.getElementById("page");-->
+<!--	var str="";-->
+<!--	var perPage = [[${perPage}]]-->
+<!--	var currentPage= "<b>"+current+"</b>";-->
+<!--	var last = parseInt(total%perPage==0?total/perPage:(total/perPage+1));-->
+<!--	console.log("last:"+last);-->
+<!--	if(total<=perPage){-->
+<!--		page.innerHTML = currentPage;-->
+<!--	}else{-->
+<!--		if(current==1){-->
+<!--			str+=currentPage;-->
+<!--			for (var i = 2; i < last+1; i++) {-->
+<!--				str+="<a href=\"/wallpaper/search/"+i+"\">"+i+"</a>";-->
+<!--			}-->
+<!--			str +="<a href=\"/wallpaper/search/"+last+"\">尾页</a>";-->
+<!--		}else if(current==last){-->
+<!--			str+="<a href=\"/wallpaper/search/"+1+"\">首页</a>";-->
+<!--			for (var i= 1; i<last; i++) {-->
+<!--				str+="<a href=\"/wallpaper/search/"+i+"\">"+i+"</a>";-->
+<!--				console.log(str);-->
+<!--			}-->
+<!--			str = str+currentPage;-->
+<!--		}else{-->
+<!--			str+="<a href=\"/wallpaper/search/"+1+"\">首页</a>";-->
+<!--			for (var i= 1; i<current; i++) {-->
+<!--				str+="<a href=\"/wallpaper/search/"+i+"\">"+i+"</a>";-->
+<!--			}-->
+<!--			str+=currentPage;-->
+<!--			for (var i= current+1; i<last+1; i++) {-->
+<!--				str+="<a href=\"/wallpaper/search/"+i+"\">"+i+"</a>";-->
+<!--			}-->
+<!--			str +="<a href=\"/wallpaper/search/"+last+"\">尾页</a>";-->
+<!--		}-->
+<!--		page.innerHTML = str;-->
+<!--	}-->
+<!--</script>-->
+

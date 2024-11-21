@@ -1,5 +1,6 @@
 package org.whh.bz.dao;
 
+import org.springframework.stereotype.Repository;
 import org.whh.bz.entity.VipRecord;
 
 public interface VipRecordDao {

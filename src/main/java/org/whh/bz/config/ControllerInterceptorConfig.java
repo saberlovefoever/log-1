@@ -16,11 +16,11 @@ import javax.annotation.Resource;
 @Configuration
 public class ControllerInterceptorConfig extends WebMvcConfigurationSupport {
     @Resource
-    private LoginInterceptor l;
+    private LoginInterceptor loginInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(l).addPathPatterns("/download/**","/announce","/announce.php");
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/download/**","/announce","/announce.php");
     }
 
     @Override

@@ -32,7 +32,7 @@
 </ul>
 <!--搜索框-->
 <div class="search">
-    <form  method="post" name="schform" id="schform" action="/search" enctype="application/x-www-form-urlencoded">
+    <form  method="post" name="schform" id="schform" action="/wallpaper/search/1" enctype="application/x-www-form-urlencoded">
         <p>
             <input type="text" name="keyboard" class = "keyboard"value="请输入壁纸名称" onFocus="if(this.value=='请输入壁纸名称') this.value='';" onBlur="if(this.value=='') this.value='请输入壁纸名称';" autocomplete="off" />
             <input name="submit"type="submit" value="" class="sub"  />
@@ -56,7 +56,7 @@
 		<div class="photo-hd"><h1>[[${pic.imgKeywords}]]</h1></div>
 		<div class="photo-pic">
             <a href="" id="img">
-                <img th:src="@{/getOne/{a}(a=${pic.imgId})}"
+                <img th:src="@{/wallpaper/sample2/{a}(a=${pic.imgId})}"
                      th:data-pic="${pic.imgId}"  th:alt="${pic.imgKeywords}"
                      th:title="${pic.imgKeywords}">
             </a>
@@ -65,7 +65,7 @@
 	</a></div><a href="https://zhutix.com/tag/win10-zhuti/" target="_blank">
 </a><div class="side"><a href="https://zhutix.com/tag/win10-zhuti/" target="_blank"></a>
     <div class="downpic">
-        <a target="_blank" th:href="@{/download/{d}(d=${pic.imgId})}" th:data-id="${pic.imgId}">下载原图(3840x2160)</a>
+        <a target="_blank" th:href="@{/wallpaper/download/{d}(d=${pic.imgId})}" th:data-id="${pic.imgId}">下载原图(3840x2160)</a>
     </div>
     		<div class="infor">
               <p>分类 <span> <a target="_blank" href="/4kyouxi/">4K游戏</a> </span> </p>

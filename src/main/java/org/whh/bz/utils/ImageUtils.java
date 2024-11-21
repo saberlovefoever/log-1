@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.Assert;
+import reactor.util.annotation.Nullable;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +40,7 @@ public class ImageUtils {
      * @return img hash
      */
     public  static  String imgHash(File f) throws IOException {
+        Assert.notNull(f,"图片文件为空");
         BufferedImage img = new BufferedImage(9,8,BufferedImage.TYPE_INT_RGB);
         img.getGraphics().drawImage( ImageIO.read(f),0,0,9,8,null);
         int s []=new int[9*8];

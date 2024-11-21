@@ -7,8 +7,6 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.whh.bz.entity.WxUser;
-@Mapper
-@Repository
 public interface UserMapper {
     @Select("SELECT wx_name FROM wx_user WHERE wx_openid =#{openid};")
     WxUser findByOpenid(String openid);

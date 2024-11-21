@@ -20,7 +20,6 @@ import org.whh.bz.entity.WxUser;
 
 import java.time.Duration;
 
-@EnableCaching
 @Configuration
 public class CacheConfig {
 
@@ -70,69 +69,4 @@ public class CacheConfig {
 		return factory;
 	}
 
-
-	/**
-	 * redisFactoryConfig
-	 * Use DB->0
-	 */
-
-/*	public RedisConnectionFactory redisConnectionFactory(JedisPoolConfig jedisPoolConfig){
-		RedisStandaloneConfiguration  configuration = new RedisStandaloneConfiguration();
-		configuration.setDatabase(0);
-		JedisConnectionFactory rc = new JedisConnectionFactory(configuration);
-		return  rc;
-	}*/
-
-	/*Use DB->1*/
-	/*public RedisConnectionFactory another_redisConnectionFactory(JedisPoolConfig jedisPoolConfig){
-		RedisStandaloneConfiguration  configuration = new RedisStandaloneConfiguration();
-		configuration.setDatabase(1);
-		JedisConnectionFactory rc = new JedisConnectionFactory(configuration);
-		return  rc;
-	}
-*/
-
-
-	@Bean
-	public LettuceConnectionFactory lettuceConnectionFactory(){
-		LettuceConnectionFactory rc = new LettuceConnectionFactory();
-		return  rc;
-	}
-
-
-	@Bean
-	public RedisTemplate<String, WxUser>  redisTemplate(LettuceConnectionFactory  lettuceConnectionFactory){
-		RedisTemplate<String, WxUser> wXUserRedisTemplate = new RedisTemplate<>();
-		wXUserRedisTemplate.setConnectionFactory(lettuceConnectionFactory);
-		FastJsonRedisSerializer<WxUser> fastJsonRedisSerializer = new FastJsonRedisSerializer(WxUser.class);
-		wXUserRedisTemplate .setDefaultSerializer(fastJsonRedisSerializer);
-		return 	wXUserRedisTemplate;
-	}
-	@Bean
-	public RedisTemplate<String, Img> redisTemplate1(LettuceConnectionFactory redisConnectionFactory){
-		RedisTemplate<String, Img> imgRedisTemplate = new RedisTemplate<>();
-		imgRedisTemplate.setConnectionFactory(redisConnectionFactory);
-		FastJsonRedisSerializer<Img>  fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Img.class);
-		imgRedisTemplate .setDefaultSerializer(fastJsonRedisSerializer);
-		return 	imgRedisTemplate;
-	}
-	/*default redisTemplate*/
-	@Bean
-
-	public RedisTemplate<String, Object> redisTemplate2(LettuceConnectionFactory redisConnectionFactory){
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(redisConnectionFactory);
-		FastJsonRedisSerializer<Object>  fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
-		redisTemplate.setKeySerializer(fastJsonRedisSerializer);
-		return redisTemplate;
-	}
-	@Bean
-	@Primary
-	public RedisTemplate<Object, Object> redisTemplate3(LettuceConnectionFactory redisConnectionFactory){
-		RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(redisConnectionFactory);
-		FastJsonRedisSerializer<Object>  fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
-		redisTemplate.setKeySerializer(fastJsonRedisSerializer);
-		return redisTemplate;
-	}
 }

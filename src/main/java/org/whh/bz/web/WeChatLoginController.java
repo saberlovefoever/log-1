@@ -14,7 +14,6 @@ import org.whh.bz.config.WxMappingJackson2HttpMessageConverter;
 import org.whh.bz.entity.Access_token;
 import org.whh.bz.entity.UserDetails;
 import org.whh.bz.entity.WxUser;
-import org.whh.bz.service.RedisUserService;
 import org.whh.bz.service.UserService;
 import org.whh.bz.utils.WeChatUtils;
 import reactor.util.annotation.Nullable;
@@ -34,13 +33,10 @@ public class WeChatLoginController {
     private RestTemplate restTemplate;
     @Resource
     private UserService userService;
-    @Resource
-    private RedisUserService redisUserService;
 
     @GetMapping("/checklogin")
     @ResponseBody
     private void getQRCodePage(HttpServletRequest req,@Nullable@CookieValue String s ) {
-        while (redisUserService.findUser(s)==null)
        req.setAttribute("status",1);
     }
     /**
@@ -88,12 +84,13 @@ public class WeChatLoginController {
         UserDetails userDetails = restTemplate.getForObject(WeChatUtils.getWeChatUserinfo(obj.getAccess_token(),obj.getOpenid()),UserDetails.class);
         WxUser realUser  = new WxUser(userDetails.getNickname(),userDetails.getOpenid());
         //查询数据库
-        int flag = redisUserService.addUser(realUser,state);
+//        int flag = redisUserService.addUser(realUser,state);
 //        如何通知浏览器用户呢？
 //        1、websocket
 //        2、轮询
 //        3、异步ajax
 //        调用消息队列
-    return flag>0?"<script>alert('OK');this.close</script>":"<script>alert('ERROR');</script>";
+    return  null;
+//            flag>0?"<script>alert('OK');this.close</script>":"<script>alert('ERROR');</script>";
     }
 }

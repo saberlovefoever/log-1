@@ -33,15 +33,17 @@
 </style>
 </head>
 <body>
-<p>[[${msg}]]</p>
-	<form class="up_form" action="/upload/result" accept="image/*"  enctype="multipart/form-data" method="post">
-		<input type="file" id="fileElem" name="imageFile" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
-		<a  target="_blank" href="#" id="fileSelect" class="fileSelect">Select some files</a><button type="submit" class="upload-button">上传！</button>
+	<form class="up_form" action="/wallpaper/uploadResult" accept="image/*"  enctype="multipart/form-data" method="post">
+		<input type="file" id="fileElem" name="imageFile"
+			   multiple accept="image/*" style="display:none"
+			   onchange="handleFiles(this.files)">
+		<a  target="_blank" href="#" id="fileSelect" class="fileSelect">Select some files</a>
+		<button type="submit" class="upload-button">上传！</button>
 		<div id="fileList">
-		<p class="notice">No files selected!</p>
+			<p class="notice">No files selected!</p>
 		</div>
 	</form>
-
+<div id="result"></div>
 <script type="text/javascript">
 	window.URL = window.URL || window.webkitURL;
 	
@@ -73,10 +75,10 @@
 	                window.URL.revokeObjectURL(this.src);
 	            }
 	            li.appendChild(img);
-				var select = document.createElement("select");
-				select.name = "imgStyle";
-				select.innerHTML = "<option>动漫</option><option>风景</option>";
-				li.appendChild(select);
+				// var select = document.createElement("select");
+				// select.name = "imgStyle";
+				// select.innerHTML = "<option>动漫</option><option>风景</option>";
+				// li.appendChild(select);
 // 				var describe = document.createElement("input");
 // 				describe.value  =  select.value;
 // 				li.appendChild(describe);

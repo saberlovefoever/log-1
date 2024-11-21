@@ -22,7 +22,7 @@ public class navigationController {
     @RequestMapping("/")
     private String getWebsites(HttpServletRequest request){
         List websiteList = websiteDao.getAllWebsite();
-        request.setAttribute("demo",websiteList);
+        request.setAttribute("websiteList",websiteList);
         return "index";
     }
 }

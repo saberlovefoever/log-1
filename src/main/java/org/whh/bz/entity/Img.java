@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.ibatis.type.Alias;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import reactor.util.annotation.Nullable;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -19,18 +21,14 @@ import java.sql.Date;
 @NoArgsConstructor
 @Alias("img")
 public class Img implements Serializable {
+  @Nullable
   private int imgId;
   private Date imgUpdate;
   private String imgKeywords;
-  private String imgType;
-  private String imgSize;
   private String imgHash;
-
-  public Img(int imgId, String imgKeywords, String imgType, String imgSize,String imgHash) {
-    this.imgId = imgId;
+@ConstructorBinding
+  public Img( String imgKeywords,String imgHash) {
     this.imgKeywords = imgKeywords;
-    this.imgType = imgType;
-    this.imgSize = imgSize;
     this.imgHash = imgHash;
   }
 }

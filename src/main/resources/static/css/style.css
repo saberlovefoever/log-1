@@ -64,8 +64,13 @@ a.logo,a.logo:visited {float:left;width:140px;display:block;line-height:118px;he
 .slist li {float:left;width:390px;height:250px;margin:0 15px 10px 0;position: relative; overflow: hidden;}
 .slist li span {display: block;width: 100%;height: 250px;overflow: hidden;background:url(../img/load.gif) no-repeat 50% 50%;}
 .slist li img {width: 120%;}
-.slist li b {display: block; height: 40px; position: absolute; right: 10px; left: 0px; bottom: -40px; height: 34px; line-height: 34px;-webkit-transition:all .2s ease-in;transition:all .2s ease-in;font-weight: normal;color: #fff;width: 100%;text-indent: 10px;color:#edf0f2 ; font-size: 14px;}
-.slist li:hover b{bottom: 0px; background: url(../img/list_t.png);}
+.slist li b {display: block; height: 40px; position: absolute; right: 10px; left: 0px; bottom: -40px; height: 34px; line-height: 34px;-webkit-transition:all .2s ease-in;transition:all .2s ease-in;font-weight: normal;color: #fff;
+    width: 100%;text-indent: 10px;color: #e2e9de;
+    font-size: 16px;
+    text-shadow: -1px 1px black, -1px  1px black}
+/*.slist li:hover b{bottom: 0px; background: url(../img/list_t.png);}*/
+/*动画背景*/
+.slist li:hover b{bottom: 0px;}
 .slist li.nextpage a {display: block;background: #19b955;height: 100%;}
 .slist li.nextpage p {display: inline-block;font-size: 26px;line-height: 39px;vertical-align: top;text-align: left;margin-left: 38px;color: #fff;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);position:absolute;left:50%;top:50%}
 .slist li.nextpage p:before {width: 60px;height: 60px;content: "";display: inline-block;background: url(../img/nextpage.png) no-repeat;position: absolute;top:10px;left: -70px;}

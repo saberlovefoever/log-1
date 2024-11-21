@@ -7,16 +7,20 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.whh.bz.interceptor.WsInterceptor;
 
-import javax.annotation.Resource;
 
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Resource
-    private WebSocketHttpAuthHandler httpAuthHandler;
-    @Resource
     private WsInterceptor myInterceptor;
+
+    private WebSocketHttpAuthHandler httpAuthHandler;
+
+    @Autowired
+    public WebSocketConfig(WebSocketHttpAuthHandler httpAuthHandler, WsInterceptor myInterceptor) {
+        this.httpAuthHandler = httpAuthHandler;
+        this.myInterceptor = myInterceptor;
+    }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
